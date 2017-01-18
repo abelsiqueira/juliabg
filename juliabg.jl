@@ -4,7 +4,7 @@ using Images, Colors
 
 function julia(cx, cy; lines = 100, cols = 100, maxiter=10)
   Cx = 0.0
-  l = 1.4
+  l = 2.0
   r = l*cols/lines
   y = linspace(-l, l, lines)
   x = linspace(Cx - r, Cx + r, cols)
@@ -34,14 +34,23 @@ folder. It simply updates that file.
 function genjuliabg()
   f = joinpath(ENV["HOME"], "juliabg.png")
   θ = 0.0
+  rows = rand(1:4)
+  cols = rows + div(rows, 2)
   w, h = 1920, 1080
+  gw, gh = div(w, cols), div(h, rows)
   A = zeros(h, w, 3)
-  r = 0.62 + (1.7 - 0.62) * rand()
-  θ = rand() * 2π
-  for i = 1:3
-    cx, cy = r * sin(θ), r * cos(θ)
-    θ += π/2
-    A[:,:,i] = julia(cx, cy, lines=h, cols=w, maxiter=100)
+  for gi = 1:rows
+    for gj = 1:cols
+      θ = rand() * 2π
+      I = (gi-1) * gh + (1:gh)
+      J = (gj-1) * gw + (1:gw)
+      for i = 1:3
+        r = 0.62 + (1.7 - 0.62) * rand()
+        cx, cy = r * sin(θ), r * cos(θ)
+        θ += 2π/3*rand()
+        A[I,J,i] = julia(cx, cy, lines=gh, cols=gw, maxiter=100)
+      end
+    end
   end
   save(f, convert(Image, A))
   ENV["DISPLAY"] = ":0"
