@@ -32,8 +32,10 @@ Install and start cron (search your distribution).
 
 ```
 crontab -e
-* * * * * /usr/local/bin/juliabg
+*/15 * * * * /usr/local/bin/juliabg
 ```
+
+`*/15` will update the background every 15 minutes.
 
 ## License
 
