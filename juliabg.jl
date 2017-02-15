@@ -32,13 +32,12 @@ This function assumes that there is a file called juliabg.png on this
 folder. It simply updates that file.
 """
 function genjuliabg()
-  f = joinpath(ENV["HOME"], "juliabg.png")
   θ = 0.0
   rows = rand(1:4)
   cols = rows + div(rows, 2)
   w, h = 1920, 1080
   gw, gh = div(w, cols), div(h, rows)
-  A = zeros(h, w, 3)
+  A = zeros(3, h, w)
   for gi = 1:rows
     for gj = 1:cols
       θ = rand() * 2π
@@ -48,11 +47,12 @@ function genjuliabg()
         r = 0.62 + (1.7 - 0.62) * rand()
         cx, cy = r * sin(θ), r * cos(θ)
         θ += 2π/3*rand()
-        A[I,J,i] = julia(cx, cy, lines=gh, cols=gw, maxiter=100)
+        A[i,I,J] = julia(cx, cy, lines=gh, cols=gw, maxiter=100)
       end
     end
   end
-  save(f, convert(Image, A))
+  f = joinpath(ENV["HOME"], "juliabg.png")
+  save(f, colorview(RGB, A))
   ENV["DISPLAY"] = ":0"
   run(`feh --bg-max --no-fehbg $f`)
 end
